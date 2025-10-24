@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Protocol Navigation Agent</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1e40af;
+            --secondary-color: #3b82f6;
+            --accent-color: #10b981;
+            --background-color: #f8fafc;
+            --text-color: #1e293b;
+            --light-bg: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.05);
+            --error-color: #dc2626;
+            --transition: all 0.3s ease;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary-color: #60a5fa;
+                --secondary-color: #1e40af;
+                --accent-color: #34d399;
+                --background-color: #0f172a;
+                --text-color: #e2e8f0;
+                --light-bg: #1e293b;
+                --shadow-color: rgba(0, 0, 0, 0.2);
+            }
+        }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
+        body { background:var(--background-color); color:var(--text-color); line-height:1.6; transition:var(--transition); }
+        .container { max-width:1200px; margin:0 auto; padding:2rem; display:grid; grid-template-columns:1fr 3fr; gap:2rem; }
+        .sidebar { background:var(--light-bg); padding:1.5rem; border-radius:1rem; box-shadow:0 4px 6px -1px var(--shadow-color); position:sticky; top:1rem; }
+        .sidebar h2 { color:var(--primary-color); font-size:1.5rem; margin-bottom:1.5rem; }
+        .sidebar ul { list-style:none; }
+        .sidebar ul li { margin-bottom:1rem; }
+        .sidebar ul li a { color:var(--text-color); text-decoration:none; font-weight:500; transition:var(--transition); }
+        .sidebar ul li a:hover { color:var(--secondary-color); }
+        .sidebar .emergency { background:var(--error-color); color:white; padding:0.75rem; border-radius:0.5rem; text-align:center; margin-top:1rem; }
+        .sidebar .emergency a { color:white; font-weight:600; }
+        .main-content { display:grid; gap:2rem; }
+        header { background:linear-gradient(135deg,var(--primary-color),var(--secondary-color)); color:white; padding:2rem; border-radius:1rem; box-shadow:0 10px 15px -3px var(--shadow-color); grid-column:1/-1; text-align:center; }
+        header h1 { font-size:2rem; margin-bottom:0.5rem; }
+        header p { font-size:1rem; opacity:0.9; }
+        .input-section { background:var(--light-bg); padding:2rem; border-radius:1rem; box-shadow:0 4px 6px -1px var(--shadow-color); }
+        .input-section h2 { font-size:1.5rem; margin-bottom:1rem; color:var(--primary-color); }
+        .input-form { display:flex; gap:1rem; }
+        .input-section input { flex:1; padding:0.75rem 1rem; border:1px solid var(--secondary-color); border-radius:0.5rem; font-size:1rem; transition:var(--transition); }
+        .input-section input:focus { outline:none; border-color:var(--accent-color); box-shadow:0 0 0 3px rgba(var(--accent-color),0.1); }
+        .input-section button { background:var(--secondary-color); color:white; padding:0.75rem 1.5rem; border:none; border-radius:0.5rem; font-size:1rem; cursor:pointer; transition:var(--transition); }
+        .input-section button:hover { background:var(--primary-color); transform:translateY(-2px); }
+        .analysis-results { background:var(--light-bg); padding:1.5rem; border-radius:1rem; box-shadow:0 4px 6px -1px var(--shadow-color); }
+        .analysis-results h2 { color:var(--primary-color); margin-bottom:1rem; }
+        .analysis-results .high-risk { background:var(--error-color); color:white; padding:1rem; border-radius:0.5rem; margin:1rem 0; }
+        .analysis-results .standard-care { background:var(--accent-color); color:white; padding:1rem; border-radius:0.5rem; margin:1rem 0; }
+        .analysis-results ul { margin-left:1.5rem; margin-bottom:1rem; }
+        .analysis-results li { margin-bottom:0.5rem; }
+        .provider-directory { background:var(--light-bg); padding:1.5rem; border-radius:1rem; box-shadow:0 4px 6px -1px var(--shadow-color); }
+        .provider-directory h3 { color:var(--primary-color); margin-bottom:1rem; }
+        .provider-directory ul { list-style:none; }
+        .provider-directory ul li { padding:0.5rem 0; border-bottom:1px solid var(--secondary-color); }
+        .action-buttons { display:flex; gap:1rem; margin-top:1rem; }
+        .action-buttons button { flex:1; padding:0.75rem; border:none; border-radius:0.5rem; font-size:1rem; cursor:pointer; transition:var(--transition); }
+        .action-buttons .emergency-btn { background:var(--error-color); color:white; }
+        .action-buttons .emergency-btn:hover { background:#b91c1c; }
+        .action-buttons .appointment-btn { background:var(--accent-color); color:white; }
+        .action-buttons .appointment-btn:hover { background:#059669; }
+        .disclaimer { background:#fee2e2; color:#991b1b; padding:1rem; border-radius:1rem; text-align:center; font-weight:500; margin-top:1rem; }
+        footer { grid-column:1/-1; text-align:center; padding:2rem 0; color:var(--text-color); font-size:0.875rem; opacity:0.8; }
+        @media (max-width:768px) { .container { grid-template-columns:1fr; } .sidebar { position:static; } .input-form { flex-direction:column; } .action-buttons { flex-direction:column; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <aside class="sidebar">
+        <h2>Contacts</h2>
+        <ul>
+            <li><a href="#emergency">Emergency</a></li>
+            <li><a href="#location">Location</a></li>
+        </ul>
+        <div class="emergency">
+            <a href="tel:911">911</a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <h1>Medical Protocol Navigation Agent</h1>
+            <p>AI-powered symptom analysis and healthcare guidance</p>
+        </header>
+
+        <div class="input-section">
+            <h2>Describe Your Symptoms</h2>
+            <form class="input-form" onsubmit="event.preventDefault(); analyzeSymptoms();">
+                <input type="text" placeholder="e.g., chest pain, fever, headache..." id="symptom-input">
+                <button type="button" onclick="analyzeSymptoms()">Analyze</button>
+            </form>
+        </div>
+
+        <div class="analysis-results" id="analysis-results" style="display: none;">
+            <h2>Analysis Results</h2>
+            <div id="risk-assessment"></div>
+            <div id="protocol-summary">
+                <h3>Medical Protocol Summary</h3>
+                <p>[Loading...]</p>
+            </div>
+        </div>
+
+        <div class="provider-directory" id="provider-directory" style="display: none;">
+            <h3>Nearby Healthcare Providers</h3>
+            <ul id="provider-list">
+                <li>[Loading providers...]</li>
+            </ul>
+            <div class="action-buttons">
+                <button class="emergency-btn" onclick="callEmergency()">Call Emergency</button>
+                <button class="appointment-btn" onclick="bookAppointment()">Book Appointment</button>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            Disclaimer: This tool is not a substitute for professional medical advice. Always consult a licensed healthcare provider.
+        </div>
+
+        <footer>
+            <p>© 2025 Medical Protocol Navigation Agent. All rights reserved.</p>
+        </footer>
+    </main>
+</div>
+
+<script>
+async function analyzeSymptoms() {
+    const symptomInput = document.getElementById('symptom-input').value;
+    if (!symptomInput) return alert('Please enter your symptoms.');
+
+    const resultsDiv = document.getElementById('analysis-results');
+    const providerDiv = document.getElementById('provider-directory');
+    resultsDiv.style.display = 'block';
+    providerDiv.style.display = 'block';
+
+    try {
+        const response = await fetch('http://127.0.0.1:5000/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ symptom: symptomInput })
+        });
+
+        const data = await response.json();
+        if (data.error) throw new Error(data.error);
+
+        // Risk assessment
+        const riskHtml = data.risk.includes('High-Risk')
+            ? `<div class="high-risk">${data.risk}</div>`
+            : `<div class="standard-care">${data.risk}</div>`;
+        document.getElementById('risk-assessment').innerHTML = riskHtml;
+
+        // Properly format summary with bold and bullet points
+        let summaryHtml = data.summary
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')  // bold
+            .replace(/^\s*\*\s(.+)$/gm, '<li>$1</li>')        // bullets
+            .replace(/\n/g, '<br>');                           // line breaks
+
+        // Wrap <li> in <ul>
+        if (summaryHtml.includes('<li>')) summaryHtml = `<ul>${summaryHtml}</ul>`;
+
+        document.getElementById('protocol-summary').innerHTML = `
+            <h3>Medical Protocol Summary</h3>
+            ${summaryHtml}
+        `;
+
+        // Doctors list
+        const doctorListHtml = data.doctors
+            .map(d => `<li><strong>${d.name}</strong> - ${d.specialty}<br>${d.address}<br>📞 ${d.phone_number}</li>`)
+            .join('');
+        document.getElementById('provider-list').innerHTML = doctorListHtml;
+
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('risk-assessment').innerHTML =
+            '<div class="high-risk">Error in analysis. Please try again or contact emergency services.</div>';
+    }
+}
+
+function callEmergency() { window.location.href = 'tel:9552816725'; }
+function bookAppointment() { alert('Redirecting to appointment booking system...'); }
+</script>
+</body>
+</html>
